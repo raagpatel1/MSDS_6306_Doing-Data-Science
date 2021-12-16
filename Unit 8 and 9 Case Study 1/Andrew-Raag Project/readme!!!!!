@@ -1,5 +1,6 @@
   We should be able to upload files directly here fairly easily. We can use different rscript files so that we can work on our own easier, 
 but make sure after you're done working for the day that you upload it here. We can also work on a google slide so that we can upload things as we go. 
+
   Make sure that when you make changes, that it is in this folder, since I use this repository as my r directory. 
 Also make sure that when you commit changes, that you commit to master instead of making a pull request. The difference is that with a pull request, 
 I'd have to approve it everytime, but when you commit to master the changes are there automatically. 
