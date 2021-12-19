@@ -61,4 +61,4 @@ g2 = ggplot(plot2data,aes(reorder(State,-avg_IBU),avg_IBU ,fill = State)) +
 
 ggarrange(g1,g2, labels = c("",""),ncol = 2,nrow = 1)
 
-### Finish 5. 
+### Finish 5.
