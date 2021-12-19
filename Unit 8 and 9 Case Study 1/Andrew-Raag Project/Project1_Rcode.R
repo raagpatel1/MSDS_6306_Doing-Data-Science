@@ -3,6 +3,10 @@ library(plyr)
 library(dplyr) 
 library(tidyverse)
 library(ggplot2)
+library(cowplot)
+library(ggpubr)
+library(devtools)
+
 Beers <- read_csv("Live Session Assignments/MSDS_6306_Doing-Data-Science/Unit 8 and 9 Case Study 1/Beers.csv")
 Breweries <- read_csv("Live Session Assignments/MSDS_6306_Doing-Data-Science/Unit 8 and 9 Case Study 1/Breweries.csv")
 
@@ -36,6 +40,25 @@ rm(State_IBU)
 
 # I can now show by graph the top 5 states in ABV and IBU
 
-test = State_ABV_IBU %>% drop_na()
+State_ABV_IBU = State_ABV_IBU[order(-State_ABV_IBU$avg_ABV),]
+plot1data = State_ABV_IBU %>% slice(1:5)
 
-# g1 = State_ABV_IBU %>% reorder(avg_ABV) %>% slice(1:5) %>% ggplot(State_ABV_IBU, aes(State, avg_ABV, color = State)) + geom_bar()
+State_ABV_IBU = State_ABV_IBU[order(-State_ABV_IBU$avg_IBU),]
+plot2data = State_ABV_IBU %>% slice(1:5)
+
+# This reorders the plot so it is easy to see which state has the highest ABV, 
+# and also adds the value above each bar, rounded to 4 decimal places, for readability.
+# Then just simple getting rid of the needless legend, and renaming the x/y axis labels.
+
+
+g1 = ggplot(plot1data,aes(reorder(State,-avg_ABV),avg_ABV ,fill = State)) + 
+     geom_col() + geom_text(aes(label = round(avg_ABV,digits = 4)), vjust = -.5) + 
+     theme(legend.position="none") + labs(x = "State", title = "Average ABV", y ="")
+
+g2 = ggplot(plot2data,aes(reorder(State,-avg_IBU),avg_IBU ,fill = State)) + 
+  geom_col() + geom_text(aes(label = round(avg_IBU,digits = 1)), vjust = -.5) + 
+  theme(legend.position="none") + labs(x = "State", title = "Average IBU", y = "")
+
+ggarrange(g1,g2, labels = c("",""),ncol = 2,nrow = 1)
+
+### Finish 5.
