@@ -6,6 +6,7 @@ library(ggplot2)
 library(cowplot)
 library(ggpubr)
 library(devtools)
+library(ggcorrplot)
 
 Beers <- read_csv("Live Session Assignments/MSDS_6306_Doing-Data-Science/Unit 8 and 9 Case Study 1/Beers.csv")
 Breweries <- read_csv("Live Session Assignments/MSDS_6306_Doing-Data-Science/Unit 8 and 9 Case Study 1/Breweries.csv")
@@ -62,3 +63,25 @@ g2 = ggplot(plot2data,aes(reorder(State,-avg_IBU),avg_IBU ,fill = State)) +
 ggarrange(g1,g2, labels = c("",""),ncol = 2,nrow = 1)
 
 ### Finish 5.
+
+### 7. Is there an apparent relationship between the bitterness of the beer and its
+### alcoholic content? Draw a scatter plot. Make your best judgment of a relationship
+### and EXPLAIN your answer.
+
+# Created a DF, have to drop all NA, since you can't compare one without the other. 
+
+ABVvsIBU = BB %>% select(ABV,IBU) %>% drop_na()
+
+# There is correlation between the 2 variables. Using pearson correlation, 
+# because the data is relatively linear
+corr = round(cor(ABVvsIBU),2)
+head(corr)
+
+#      ABV  IBU
+# ABV 1.00 0.67
+# IBU 0.67 1.00
+
+ggplot(ABVvsIBU, aes(x = ABV, y = IBU)) + geom_point() + 
+  geom_smooth(method = lm, se=FALSE) + geom_smooth(se = FALSE, color = "red")
+
+### Finish 7.
