@@ -34,8 +34,26 @@ State_IBU = BB %>% drop_na(IBU) %>% group_by(State) %>% summarize(avg_IBU = mean
 State_ABV_IBU = join(State_ABV,State_IBU,by = "State",type = "left", match = "all")
 summary(State_ABV_IBU)
 
-# Just removing these so I can easily use the 1 DF.
-
+# Just removing these so I can easily use the 1 DF. And we can look at the data.
+summary(BB)
+# NA's IBU :1005
+# NA's ABV :62
+sum(is.na(BB$Beer_Name))
+# [1] 0
+sum(is.na(BB$Beer_ID))
+# [1] 0
+sum(is.na(BB$Brew_ID))
+# [1] 0
+sum(is.na(BB$Style))
+# [1] 5
+sum(is.na(BB$Ounces))
+# [1] 0
+sum(is.na(BB$Brewery_Name))
+# [1] 0
+sum(is.na(BB$City))
+# [1] 0
+sum(is.na(BB$State))
+# [1] 0
 rm(State_ABV)
 rm(State_IBU)
 
@@ -81,7 +99,8 @@ head(corr)
 # ABV 1.00 0.67
 # IBU 0.67 1.00
 
-ggplot(ABVvsIBU, aes(x = ABV, y = IBU)) + geom_point() + 
+ggplot(ABVvsIBU, aes(x = ABV, y = IBU)) + geom_point() +
+  stat_cor(label.x = .03, label.y = 150) +
   geom_smooth(method = lm, se=FALSE) + geom_smooth(se = FALSE, color = "red")
 
 ### Finish 7.
