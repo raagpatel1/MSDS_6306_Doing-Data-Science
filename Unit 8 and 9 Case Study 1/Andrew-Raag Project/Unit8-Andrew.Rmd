@@ -1,14 +1,3 @@
----
-title: "Unit8"
-author: "Andrew Taylor"
-date: "12/19/2021"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ```{r}
 
 library(tidyverse)
@@ -18,9 +7,6 @@ library(ggplot2)
 library(plotly)
 library(GGally)
 
-```
-
-```{r}
 
 Beer = read.csv("/Unit 8/Beers.csv")
 Brewery = read.csv("/Unit 8/Breweries.csv")
@@ -30,12 +16,8 @@ Beers = Beers %>% filter(!is.na(ABV) & !is.na(Style))
 
 Beers2 = Beers %>% filter(!is.na(IBU))
 
-```
 
-
-```{r}
-
-## Part 1 ##
+####### Part 1 #######
 
 State_Count <- as.data.frame(table(Brewery$State))
 
@@ -51,12 +33,7 @@ TopTen %>% ggplot(aes(x = reorder(Var1, -Freq), y = Freq)) + geom_bar(stat = "id
 LastTen %>% ggplot(aes(x = reorder(Var1, -Freq), y = Freq)) + geom_bar(stat = "identity", fill="red") + labs(title="States with Least Breweries", x="State", y="No. of Breweries") + geom_text(aes(label=Freq), position=position_dodge(width=0.9), vjust=-0.25)
 
 
-```
-
-
-```{r}
-
-## Part 4 ##
+####### Part 4 #######
 
 State_ABV <- aggregate(x = Beers$ABV, by = list(Beers$State), FUN = median)
 State_IBU <- aggregate(x = Beers2$IBU, by = list(Beers2$State), FUN = median)
@@ -78,13 +55,8 @@ TopIBU %>% ggplot(aes(x = reorder(Group.1, -x), y = x)) + geom_bar(stat = "ident
 
 LastIBU %>% ggplot(aes(x = reorder(Group.1, -x), y = x)) + geom_bar(stat = "identity", fill="red") + labs(title="States Lowest Median IBU", x="State", y="Median IBU") + geom_text(aes(label=x), position=position_dodge(width=0.9), vjust=-0.25)
 
-```
 
-
-
-```{r}
-
-## Part 6 ##
+####### Part 6 #######
 
 Beers %>% ggplot(aes(x = ABV, fill = State)) + geom_histogram(color = 'black') + labs(title="Distribution of ABV", x="ABV", y="Number of Beers")
 Beers %>% ggplot(aes(x = ABV)) + geom_histogram(color = 'blue') + labs(title="Distribution of ABV", x="ABV", y="Number of Beers")
