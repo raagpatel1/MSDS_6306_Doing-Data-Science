@@ -22,17 +22,13 @@ library(GGally)
 
 ```{r}
 
-Beer = read.csv("C:/Users/andlo/Documents/School/SMU/Courses/DS6306 - Doing Data Science/Unit 8/Beers.csv")
-Brewery = read.csv("C:/Users/andlo/Documents/School/SMU/Courses/DS6306 - Doing Data Science/Unit 8/Breweries.csv")
+Beer = read.csv("/Unit 8/Beers.csv")
+Brewery = read.csv("/Unit 8/Breweries.csv")
 
 Beers = left_join(Beer, Brewery, by = c("Brewery_id" = "Brew_ID"))
 Beers = Beers %>% filter(!is.na(ABV) & !is.na(Style))
 
-Beers
-
 Beers2 = Beers %>% filter(!is.na(IBU))
-
-Beers2
 
 ```
 
