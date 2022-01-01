@@ -1,5 +1,3 @@
-```{r}
-
 library(tidyverse)
 library(plyr)
 library(dplyr)
@@ -12,23 +10,16 @@ library(ggpubr)
 library(devtools)
 library(ggcorrplot)
 library(ggfittext)
-library(class)
-library(caret)
-library(e1071)
-
-```
 
 
-```{r}
+## Read in the .csv's
 
 Beer = 
-  read.csv(file.choose(),header = TRUE)
+  read_csv("MSDS_6306_Doing-Data-Science/Unit 8 and 9 Case Study 1/Beers.csv")
 Brewery = 
-  read.csv(file.choose(),header = TRUE)
+  read_csv("MSDS_6306_Doing-Data-Science/Unit 8 and 9 Case Study 1/Breweries.csv")
 
-```
 
-```{r}
 
 ################################### PART 2 #####################################
 #
@@ -37,17 +28,22 @@ Brewery =
 #
 ################################### PART 2 #####################################
 
+## Renamed the 'name' columns, as they were the same in both .csv files, which 
+## were hard to distinguish when the tables combined. 
+
 colnames(Beer)[1] = "Beer_Name"
 colnames(Brewery)[2] = "Brewery_Name"
+
+## Used a full join to make sure all data is accurately represented. 
+
 BB = full_join(Beer,Brewery,by = c("Brewery_id" = "Brew_ID"))
-BB_F = BB %>% drop_na(IBU,ABV,Style)
+
+## Upon inspection of the head and tail of the dataframe, everything seemed to 
+## be in order.
 
 head(BB,6)
 tail(BB,6)
 
-```
-
-```{r}
 
 ################################### PART 1 #####################################
 #
@@ -55,9 +51,8 @@ tail(BB,6)
 #
 ################################### PART 1 #####################################
 
-# For some reason I can't reorder the chart, maybe you'll have more luck than
+# For some reason I can't reoder the chart, maybe you'll have more luck than
 # me. Also this graph is a work in progress, I think we can make it prettier.
-
 
 BB %>% group_by(State) %>% summarize(Amount = n_distinct(Brewery_Name)) %>% 
   arrange(desc(Amount)) %>% slice(1:15) %>%
@@ -68,17 +63,14 @@ BB %>% group_by(State) %>% summarize(Amount = n_distinct(Brewery_Name)) %>%
   labs(title = "Amount of Breweries in Each State", x = "Amount", y = "State")
 
 
-```
-
-```{r}
-
 ################################### PART 3 #####################################
 #
 # 3. Address the missing values in each column.
 #
 ################################### PART 3 #####################################
 
-# Just removing these so I can easily use the 1 DF. And we can look at the data.
+## To address the missing values, we first must know where they are. 
+
 summary(BB)
 # NA's IBU :1005
 # NA's ABV :62
@@ -86,7 +78,7 @@ sum(is.na(BB$Beer_Name))
 # [1] 0
 sum(is.na(BB$Beer_ID))
 # [1] 0
-sum(is.na(BB$Brewery_id))
+sum(is.na(BB$Brew_ID))
 # [1] 0
 sum(is.na(BB$Style))
 # [1] 5
@@ -98,11 +90,12 @@ sum(is.na(BB$City))
 # [1] 0
 sum(is.na(BB$State))
 # [1] 0
- 
 
-```
+## Created a filtered dataframe where NA values that would skew the data were
+## dropped. In further statistical analysis, having NULL data can offset the 
+## results.
 
-```{r}
+BB_F = BB %>% drop_na(IBU,ABV,Style)
 
 ################################### PART 4 #####################################
 #
@@ -110,6 +103,19 @@ sum(is.na(BB$State))
 # each state. Plot a bar chart to compare.
 #
 ################################### PART 4 #####################################
+
+## We thought it'd be best to create the graphs this way, versus creating other
+## dataframes because, if we needed to tinker with some parts, it was clearer to 
+## do it this way. 
+
+## The way these 'stanzas' of code works is, we take the filtered dataset 
+## previously created, group the data by each state, then take the necessary 
+## summary. We then organize the data, so that the highest/lowest value is at 
+## the top, and we can slice the dataframe to show exactly what we want. Then
+## we use standard ggplot functions, where we also reorder the bars for 
+## readability. 
+
+## Highest median ABV by state.
 
 BB_F %>% group_by(State) %>% summarize(Median_ABV = median(ABV)) %>% 
   arrange(desc(Median_ABV)) %>% slice(1:6) %>%
@@ -119,6 +125,8 @@ BB_F %>% group_by(State) %>% summarize(Median_ABV = median(ABV)) %>%
   geom_text(aes(label = round(Median_ABV,digits = 4)), vjust = -.5) + 
   theme(legend.position="none")
 
+## Lowest median ABV by state.
+
 BB_F %>% group_by(State) %>% summarize(Median_ABV = median(ABV)) %>% 
   arrange((Median_ABV)) %>% slice(1:6) %>%
   ggplot(aes(reorder(State,-Median_ABV), y = Median_ABV, fill = State)) + 
@@ -127,6 +135,8 @@ BB_F %>% group_by(State) %>% summarize(Median_ABV = median(ABV)) %>%
   geom_text(aes(label = round(Median_ABV,digits = 4)), vjust = -.5) + 
   theme(legend.position="none")
 
+## Highest median IBU by state.
+
 BB_F %>% group_by(State) %>% summarize(Median_IBU = median(IBU)) %>% 
   arrange(desc(Median_IBU)) %>% slice(1:6) %>%
   ggplot(aes(reorder(State,-Median_IBU), y = Median_IBU, fill = State)) + 
@@ -134,6 +144,8 @@ BB_F %>% group_by(State) %>% summarize(Median_IBU = median(IBU)) %>%
   labs(title="States Highest Median IBU", x="State", y="Median IBU") + 
   geom_text(aes(label = round(Median_IBU,digits = 4)), vjust = -.5) + 
   theme(legend.position="none")
+
+## Lowest median IBU by state.
 
 BB_F %>% group_by(State) %>% summarize(Median_IBU = median(IBU)) %>% 
   arrange((Median_IBU)) %>% slice(1:6) %>%
@@ -144,16 +156,24 @@ BB_F %>% group_by(State) %>% summarize(Median_IBU = median(IBU)) %>%
   theme(legend.position="none")
 
 
-```
-
-```{r}
-
 ################################### PART 5 #####################################
 # 
 # 5. Which state has the maximum alcoholic (ABV) beer? Which state has the most
 # bitter (IBU) beer?
 # 
 ################################### PART 5 #####################################
+
+## Again, we decided to clearly show how the plots are made, by exposing all the
+## intricacies of the plots. 
+
+## The way that these 'stanzas' of code work is, by first taking the filtered 
+## Dataframe, then grouping by each state, and summarizing the column of data 
+## the way we wanted. We also included the beer name alongside the ABV/IBU 
+## value, to show more information. Since multiple beer's had the same ABV, we
+## decided to show the first beer, in alphabetical order. We then used typical 
+## ggplot functions, and changed the y limits, to enchance readability. 
+
+## Highest single beer ABV
 
 BB_F %>% group_by(State) %>% 
   summarize(Max_ABV = max(ABV),Beer_Name = Beer_Name[1]) %>%
@@ -167,6 +187,8 @@ BB_F %>% group_by(State) %>%
   theme(legend.position="none") +
   coord_cartesian(ylim = c(.05,.13))
 
+## Lowest single beer ABV
+
 BB_F %>% group_by(State) %>% 
   summarize(min_ABV = min(ABV),Beer_Name = Beer_Name[1]) %>%
   arrange(desc(min_ABV)) %>% 
@@ -178,6 +200,8 @@ BB_F %>% group_by(State) %>%
   geom_text(aes(label = Beer_Name, vjust = -2), check_overlap = T) +
   theme(legend.position="none") +
   coord_cartesian(ylim = c(.0,.065))
+
+## Highest single beer IBU
 
 BB_F %>% group_by(State) %>% 
   summarize(Max_IBU = max(IBU),Beer_Name = Beer_Name[1]) %>%
@@ -191,6 +215,8 @@ BB_F %>% group_by(State) %>%
   theme(legend.position="none") +
   coord_cartesian(ylim = c(0,150))
 
+## Lowest single beer IBU
+
 BB_F %>% group_by(State) %>% 
   summarize(min_IBU = min(IBU),Beer_Name = Beer_Name[1]) %>%
   arrange(desc(min_IBU)) %>% 
@@ -203,9 +229,7 @@ BB_F %>% group_by(State) %>%
   theme(legend.position="none") +
   coord_cartesian(ylim = c(0,55))
 
-```
 
-```{r}
 
 ################################### PART 6 #####################################
 # 
@@ -213,17 +237,32 @@ BB_F %>% group_by(State) %>%
 # 
 ################################### PART 6 #####################################
 
+## Using the integrated region database in R, we created a dataframe where we took
+## the abbreviated state name and it's corresponding region, then using a left
+## join we was able to associate a region with it's corresponding state. we was 
+## unsure whether to keep it in the same dataframe we created earlier (BB_F), so 
+## we created a new one. 
 
-BB_F %>% ggplot(aes(x = ABV, fill = State)) + geom_histogram(color = 'black') + 
-  labs(title="Distribution of ABV", x="ABV", y="Number of BB_F")
+State_Region = data.frame(state.abb, state.region)
+BB_F_Region = left_join(BB_F,State_Region, by = c("State" = "state.abb"))
 
-BB_F %>% ggplot(aes(x = ABV)) + geom_histogram(color = 'blue') + 
-  labs(title="Distribution of ABV", x="ABV", y="Number of BB_F")
+# sum(is.na(BB_F_Region$state.region))
+# [1] 0
 
-BB_F %>% ggplot(aes(x = ABV)) + geom_line(aes(fill=..count..),stat="bin") + 
-  labs(title="Distribution of ABV", x="ABV", y="Number of BB_F")
 
-BB_F %>% ggplot(aes(x = ABV)) + geom_boxplot()
+## Filling in the bars with the corresponding region vs the corresponsing state,
+## allows for more inferences to be made, and is much easier to read.
+
+BB_F_Region %>% ggplot(aes(x = ABV, fill = state.region)) + geom_histogram(color = 'black') + 
+  labs(title="Distribution of ABV", x="ABV", y="Number of Beers")
+
+BB_F_Region %>% ggplot(aes(x = ABV)) + geom_histogram(color = 'blue') + 
+  labs(title="Distribution of ABV", x="ABV", y="Number of Beers")
+
+BB_F_Region %>% ggplot(aes(x = ABV)) + geom_line(aes(fill=..count..),stat="bin") + 
+  labs(title="Distribution of ABV", x="ABV", y="Number of Beers")
+
+BB_F_Region %>% ggplot(aes(x = ABV)) + geom_boxplot()
 
 summary(BB_F$ABV)
 MinABV = which.min(BB_F$ABV)
@@ -231,9 +270,7 @@ BB_F[MinABV,]
 MaxABV = which.max(BB_F$ABV)
 BB_F[MaxABV,]
 
-```
 
-```{r}
 
 ################################### PART 7 #####################################
 # 
@@ -257,16 +294,13 @@ ggplot(ABVvsIBU, aes(x = ABV, y = IBU)) + geom_point() +
   stat_cor(label.x = .03, label.y = 150) +
   geom_smooth(method = lm, se=FALSE) + geom_smooth(se = FALSE, color = "red") 
 
-```
 
-
-```{r}
 
 ################################### PART 8 #####################################
 # 
 # 8. Budweiser would also like to investigate the difference with respect to IBU 
 # and ABV between IPAs (India Pale Ales) and other types of Ale (any beer with 
-# "Ale" in its name other than IPA). You decide to use KNN classification to 
+# “Ale” in its name other than IPA). You decide to use KNN classification to 
 # investigate this relationship. Provide statistical evidence one way or the 
 # other. You can of course assume your audience is comfortable with percentages.
 # KNN is very easy to understand conceptually. 
@@ -279,50 +313,22 @@ ggplot(ABVvsIBU, aes(x = ABV, y = IBU)) + geom_point() +
 ################################### PART 8 #####################################
 
 
-BB_Ale = BB_F[str_detect(BB_F$Style, "Ale"), ] %>% add_column(Type = "Ale")
-BB_IPA = BB_F[str_detect(BB_F$Style, "IPA"), ] %>% add_column(Type = "IPA")
-BB_Type <- rbind(BB_Ale, BB_IPA)
-
-ggplot(BB_Type, aes(x = ABV, y = IBU, color = Type)) + geom_point()
-
-iterations = 100
-numks = 50
-splitPerc = .8
-
-masterAcc = matrix(nrow = iterations, ncol = numks)
-
-for(j in 1:iterations)
-{
-  trainIndices = sample(1:dim(BB_Type)[1],round(splitPerc * dim(BB_Type)[1]))
-  BB_Type_train = BB_Type[trainIndices,]
-  BB_Type_test = BB_Type[-trainIndices,]
-  for(i in 1:numks)
-  {
-    classifications = knn(BB_Type_train[,c(3,4)],BB_Type_test[,c(3,4)],BB_Type_train$Type, prob = TRUE, k = i)
-    table(classifications,BB_Type_test$Type)
-    CM = confusionMatrix(table(classifications,BB_Type_test$Type))
-    masterAcc[j,i] = CM$overall[1]
-  }
-  
-}
-
-MeanAcc = colMeans(masterAcc)
-
-plot(seq(1,numks,1),MeanAcc, type = "l")
-
-which.max(MeanAcc)
-max(MeanAcc)
-
-classifications = knn(BB_Type_train[,c(3,4)],BB_Type_test[,c(3,4)],BB_Type_train$Type, prob = TRUE, k = which.max(MeanAcc))
-    confusionMatrix(table(classifications,BB_Type_test$Type))
-
-
-```
 
 
 
 
-```{r}
+
+
+
+
+
+
+
+
+
+
+
+
 
 ################################### PART 9 #####################################
 # 
@@ -339,15 +345,5 @@ classifications = knn(BB_Type_train[,c(3,4)],BB_Type_test[,c(3,4)],BB_Type_train
 
 
 
-```
 
 
-```{r}
-
-################################## CONCLUSION ##################################
-# 
-#  
-# 
-################################## CONCLUSION ##################################
-
-```
