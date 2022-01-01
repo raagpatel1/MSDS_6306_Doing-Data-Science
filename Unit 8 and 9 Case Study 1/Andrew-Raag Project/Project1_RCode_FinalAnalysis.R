@@ -1,3 +1,5 @@
+```{r}
+
 library(tidyverse)
 library(plyr)
 library(dplyr)
@@ -10,13 +12,23 @@ library(ggpubr)
 library(devtools)
 library(ggcorrplot)
 library(ggfittext)
+library(class)
+library(caret)
+library(e1071)
+
+```
+
+
+```{r}
 
 Beer = 
-  read_csv("MSDS_6306_Doing-Data-Science/Unit 8 and 9 Case Study 1/Beers.csv")
+  read.csv(file.choose(),header = TRUE)
 Brewery = 
-  read_csv("MSDS_6306_Doing-Data-Science/Unit 8 and 9 Case Study 1/Breweries.csv")
+  read.csv(file.choose(),header = TRUE)
 
+```
 
+```{r}
 
 ################################### PART 2 #####################################
 #
@@ -33,7 +45,9 @@ BB_F = BB %>% drop_na(IBU,ABV,Style)
 head(BB,6)
 tail(BB,6)
 
+```
 
+```{r}
 
 ################################### PART 1 #####################################
 #
@@ -41,8 +55,9 @@ tail(BB,6)
 #
 ################################### PART 1 #####################################
 
-# For some reason I can't reoder the chart, maybe you'll have more luck than
+# For some reason I can't reorder the chart, maybe you'll have more luck than
 # me. Also this graph is a work in progress, I think we can make it prettier.
+
 
 BB %>% group_by(State) %>% summarize(Amount = n_distinct(Brewery_Name)) %>% 
   arrange(desc(Amount)) %>% slice(1:15) %>%
@@ -52,6 +67,10 @@ BB %>% group_by(State) %>% summarize(Amount = n_distinct(Brewery_Name)) %>%
   coord_flip() + theme_light() + 
   labs(title = "Amount of Breweries in Each State", x = "Amount", y = "State")
 
+
+```
+
+```{r}
 
 ################################### PART 3 #####################################
 #
@@ -67,7 +86,7 @@ sum(is.na(BB$Beer_Name))
 # [1] 0
 sum(is.na(BB$Beer_ID))
 # [1] 0
-sum(is.na(BB$Brew_ID))
+sum(is.na(BB$Brewery_id))
 # [1] 0
 sum(is.na(BB$Style))
 # [1] 5
@@ -80,6 +99,10 @@ sum(is.na(BB$City))
 sum(is.na(BB$State))
 # [1] 0
  
+
+```
+
+```{r}
 
 ################################### PART 4 #####################################
 #
@@ -120,6 +143,10 @@ BB_F %>% group_by(State) %>% summarize(Median_IBU = median(IBU)) %>%
   geom_text(aes(label = round(Median_IBU,digits = 4)), vjust = -.5) + 
   theme(legend.position="none")
 
+
+```
+
+```{r}
 
 ################################### PART 5 #####################################
 # 
@@ -176,7 +203,9 @@ BB_F %>% group_by(State) %>%
   theme(legend.position="none") +
   coord_cartesian(ylim = c(0,55))
 
+```
 
+```{r}
 
 ################################### PART 6 #####################################
 # 
@@ -202,7 +231,9 @@ BB_F[MinABV,]
 MaxABV = which.max(BB_F$ABV)
 BB_F[MaxABV,]
 
+```
 
+```{r}
 
 ################################### PART 7 #####################################
 # 
@@ -226,7 +257,10 @@ ggplot(ABVvsIBU, aes(x = ABV, y = IBU)) + geom_point() +
   stat_cor(label.x = .03, label.y = 150) +
   geom_smooth(method = lm, se=FALSE) + geom_smooth(se = FALSE, color = "red") 
 
+```
 
+
+```{r}
 
 ################################### PART 8 #####################################
 # 
@@ -245,22 +279,50 @@ ggplot(ABVvsIBU, aes(x = ABV, y = IBU)) + geom_point() +
 ################################### PART 8 #####################################
 
 
+BB_Ale = BB_F[str_detect(BB_F$Style, "Ale"), ] %>% add_column(Type = "Ale")
+BB_IPA = BB_F[str_detect(BB_F$Style, "IPA"), ] %>% add_column(Type = "IPA")
+BB_Type <- rbind(BB_Ale, BB_IPA)
+
+ggplot(BB_Type, aes(x = ABV, y = IBU, color = Type)) + geom_point()
+
+iterations = 100
+numks = 50
+splitPerc = .8
+
+masterAcc = matrix(nrow = iterations, ncol = numks)
+
+for(j in 1:iterations)
+{
+  trainIndices = sample(1:dim(BB_Type)[1],round(splitPerc * dim(BB_Type)[1]))
+  BB_Type_train = BB_Type[trainIndices,]
+  BB_Type_test = BB_Type[-trainIndices,]
+  for(i in 1:numks)
+  {
+    classifications = knn(BB_Type_train[,c(3,4)],BB_Type_test[,c(3,4)],BB_Type_train$Type, prob = TRUE, k = i)
+    table(classifications,BB_Type_test$Type)
+    CM = confusionMatrix(table(classifications,BB_Type_test$Type))
+    masterAcc[j,i] = CM$overall[1]
+  }
+  
+}
+
+MeanAcc = colMeans(masterAcc)
+
+plot(seq(1,numks,1),MeanAcc, type = "l")
+
+which.max(MeanAcc)
+max(MeanAcc)
+
+classifications = knn(BB_Type_train[,c(3,4)],BB_Type_test[,c(3,4)],BB_Type_train$Type, prob = TRUE, k = which.max(MeanAcc))
+    confusionMatrix(table(classifications,BB_Type_test$Type))
+
+
+```
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+```{r}
 
 ################################### PART 9 #####################################
 # 
@@ -277,5 +339,15 @@ ggplot(ABVvsIBU, aes(x = ABV, y = IBU)) + geom_point() +
 
 
 
+```
 
 
+```{r}
+
+################################## CONCLUSION ##################################
+# 
+#  
+# 
+################################## CONCLUSION ##################################
+
+```
