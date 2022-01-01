@@ -312,21 +312,42 @@ ggplot(ABVvsIBU, aes(x = ABV, y = IBU)) + geom_point() +
 # 
 ################################### PART 8 #####################################
 
+BB_Ale = BB_F[str_detect(BB_F$Style, "Ale"), ] %>% add_column(Type = "Ale")
+BB_IPA = BB_F[str_detect(BB_F$Style, "IPA"), ] %>% add_column(Type = "IPA")
+BB_Type <- rbind(BB_Ale, BB_IPA)
 
+ggplot(BB_Type, aes(x = ABV, y = IBU, color = Type)) + geom_point()
 
+iterations = 100
+numks = 50
+splitPerc = .8
 
+masterAcc = matrix(nrow = iterations, ncol = numks)
 
+for(j in 1:iterations)
+{
+  trainIndices = sample(1:dim(BB_Type)[1],round(splitPerc * dim(BB_Type)[1]))
+  BB_Type_train = BB_Type[trainIndices,]
+  BB_Type_test = BB_Type[-trainIndices,]
+  for(i in 1:numks)
+  {
+    classifications = knn(BB_Type_train[,c(3,4)],BB_Type_test[,c(3,4)],BB_Type_train$Type, prob = TRUE, k = i)
+    table(classifications,BB_Type_test$Type)
+    CM = confusionMatrix(table(classifications,BB_Type_test$Type))
+    masterAcc[j,i] = CM$overall[1]
+  }
+  
+}
 
+MeanAcc = colMeans(masterAcc)
 
+plot(seq(1,numks,1),MeanAcc, type = "l")
 
+which.max(MeanAcc)
+max(MeanAcc)
 
-
-
-
-
-
-
-
+classifications = knn(BB_Type_train[,c(3,4)],BB_Type_test[,c(3,4)],BB_Type_train$Type, prob = TRUE, k = which.max(MeanAcc))
+    confusionMatrix(table(classifications,BB_Type_test$Type))
 
 
 
