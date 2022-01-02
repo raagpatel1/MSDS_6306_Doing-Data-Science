@@ -1,15 +1,33 @@
-library(tidyverse)
-library(plyr)
-library(dplyr)
-library(readr)
-library(ggplot2)
-library(plotly)
-library(GGally)
-library(cowplot)
-library(ggpubr)
-library(devtools)
-library(ggcorrplot)
-library(ggfittext)
+if (!require('tidyverse')) install.packages('tidyverse'); library('tidyverse')
+
+if (!require('plyr')) install.packages('plyr'); library('plyr')
+
+if (!require('dplyr')) install.packages('dplyr'); library('dplyr')
+
+if (!require('readr')) install.packages('readr'); library('readr')
+
+if (!require('ggplot2')) install.packages('ggplot2'); library('ggplot2')
+
+if (!require('plotly')) install.packages('plotly'); library('plotly')
+
+if (!require('GGally')) install.packages('GGally'); library('GGally')
+
+if (!require('cowplot')) install.packages('cowplot'); library('cowplot')
+
+if (!require('ggpubr')) install.packages('ggpubr'); library('ggpubr')
+
+if (!require('devtools')) install.packages('devtools'); library('devtools')
+
+if (!require('ggcorrplot')) install.packages('ggcorrplot'); library('ggcorrplot')
+
+if (!require('ggfittext')) install.packages('ggfittext'); library('ggfittext')
+
+if (!require('class')) install.packages('class'); library('class')
+
+if (!require('caret')) install.packages('caret'); library('caret')
+
+if (!require('e1071')) install.packages('e1071'); library('e1071')
+
 
 
 ## Read in the .csv's
@@ -300,7 +318,7 @@ ggplot(ABVvsIBU, aes(x = ABV, y = IBU)) + geom_point() +
 # 
 # 8. Budweiser would also like to investigate the difference with respect to IBU 
 # and ABV between IPAs (India Pale Ales) and other types of Ale (any beer with 
-# “Ale” in its name other than IPA). You decide to use KNN classification to 
+# "Ale" in its name other than IPA). You decide to use KNN classification to 
 # investigate this relationship. Provide statistical evidence one way or the 
 # other. You can of course assume your audience is comfortable with percentages.
 # KNN is very easy to understand conceptually. 
@@ -312,8 +330,10 @@ ggplot(ABVvsIBU, aes(x = ABV, y = IBU)) + geom_point() +
 # 
 ################################### PART 8 #####################################
 
+
 BB_Ale = BB_F[str_detect(BB_F$Style, "Ale"), ] %>% add_column(Type = "Ale")
 BB_IPA = BB_F[str_detect(BB_F$Style, "IPA"), ] %>% add_column(Type = "IPA")
+
 BB_Type <- rbind(BB_Ale, BB_IPA)
 
 ggplot(BB_Type, aes(x = ABV, y = IBU, color = Type)) + geom_point()
@@ -347,7 +367,9 @@ which.max(MeanAcc)
 max(MeanAcc)
 
 classifications = knn(BB_Type_train[,c(3,4)],BB_Type_test[,c(3,4)],BB_Type_train$Type, prob = TRUE, k = which.max(MeanAcc))
-    confusionMatrix(table(classifications,BB_Type_test$Type))
+confusionMatrix(table(classifications,BB_Type_test$Type))
+
+
 
 
 
