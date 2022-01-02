@@ -1,0 +1,15 @@
+Beer - The .csv file imported from this repository
+Breery - The .csv file imported from this repository
+
+BB - The merged dataset between Beer and Brewery
+BB_F - Filtered BB dataset that removes NA values from Style, IBU and ABV
+
+State_Region - The dataset with 2 columns selected from the ingrained State database in R
+BB_F_Region - BB_F with an additional column that shows the corresponding region to each state. 
+
+ABVvsIBU - A filtered dataset of BB_F where only the ABV and IBU columns are selected
+
+BB_Ale - The BB_F database filtered further, to only show rows where Style 
+BB_Ipa - 
+
+BB_Type
