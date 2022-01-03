@@ -1,17 +1,21 @@
 This codebook explains all the datasets created in this project. 
 
 Beer - The .csv file imported from this repository
-Breery - The .csv file imported from this repository
+Brewery - The .csv file imported from this repository
 
-BB - The merged dataset between Beer and Brewery
-BB_F - Filtered BB dataset that removes NA values from Style, IBU and ABV
+BB_() - The dataframes created are explained in their respective comments
 
-State_Region - The dataset with 2 columns selected from the ingrained State database in R
-BB_F_Region - BB_F with an additional column that shows the corresponding region to each state. 
-
-ABVvsIBU - A filtered dataset of BB_F where only the ABV and IBU columns are selected
-
-BB_Ale - The BB_F database filtered further, to only show rows where Style contained Ale
-BB_Ipa - The BB_F database filtered further, to only show rows where Style contained IPA
-
-BB_Type - The rbind of BB_Ale and BB_Ipa
+Beer :
+      Beer_Name  - Name of beer
+      Beer_ID    - Indivual ID of beer
+      ABV        - Alcohol by volume
+      IBU        - International Bitterness Unit
+      Brewery_id - ID of corresponding Brewery (Primary Key) 
+      Style      - Style of Beer (multiple factors)
+      Ounces     - Weight of beer
+ 
+Brewery :
+         Brew_ID      - Individual ID of brewery (Primary Key)
+         Brewery_Name - Name of brewery
+         City         - City that the brewery is located in
+         State        - Abbreviated state that the brewery is located
