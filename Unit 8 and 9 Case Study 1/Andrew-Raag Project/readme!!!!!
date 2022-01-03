@@ -1,31 +1,5 @@
-  We should be able to upload files directly here fairly easily. We can use different rscript files so that we can work on our own easier, 
-but make sure after you're done working for the day that you upload it here. We can also work on a google slide so that we can upload things as we go. 
+First you will find 2 folders. In those folders you will find our personal submissions for the things that needed to be done serparetly.
 
-  Make sure that when you make changes, that it is in this folder, since I use this repository as my r directory. 
-Also make sure that when you commit changes, that you commit to master instead of making a pull request. The difference is that with a pull request, 
-I'd have to approve it everytime, but when you commit to master the changes are there automatically. 
+Next you will find our codebook, which hopefully does a thorough job explaining our code. 
 
-Use this as our PPT: 
-https://docs.google.com/presentation/d/1g6EsWEPebsGvm7-65e_bbuZhIxR_nRessnN7CbdMLgo/edit?usp=sharing
-
-Your goal is to present your EDA (Answers to Questions 1,3,4,5,6,7).
-
-1. How many breweries are present in each state?
-
-3. Address the missing values in each column.
-
-4. Compute the median alcohol content and international bitterness unit for each
-state. Plot a bar chart to compare.
-
-5. Which state has the maximum alcoholic (ABV) beer? Which state has the most
-bitter (IBU) beer?
-
-6. Comment on the summary statistics and distribution of the ABV variable.
-
-7. Is there an apparent relationship between the bitterness of the beer and its
-alcoholic content? Draw a scatter plot. Make your best judgment of a relationship
-and EXPLAIN your answer.
-
-You can take 1,4,6 and I can take 3,5,7.
-
-We should also talk about how we should address the missing values, but we can figure that out at the end IMO. 
+There is also our initial EDA presentation slides, along with the rmd , html and r files for our final analysis. 
