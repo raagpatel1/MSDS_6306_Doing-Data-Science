@@ -20,6 +20,9 @@ library(ggcorrplot)
 library(Hmisc)
 library(Metrics)
 
+# YouTube Link
+# https://youtu.be/R5fykTht4f8
+#
 setwd("D:/School/DS6306/Live Session Assignments")
 
 CS_Data <- read_csv("MSDS_6306_Doing-Data-Science/Unit 14 and 15 Case Study 2/CaseStudy2-data.csv")
